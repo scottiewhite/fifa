@@ -27,16 +27,18 @@ matchData <- matchData %>%
   mutate(home_loss_odds = 1/LBA) %>%
   mutate(index = 1)
   
-summary <- matchData %>%
+# Summary wins
+summary_wins <- matchData %>%
   group_by(home_win_odds) %>%
   summarize(losses = sum(home_loss), 
             draws = sum(home_draw), 
             wins = sum(home_win), 
             games = sum(index))
 
-summary %>%
-  filter(games>100) %>%
-  ggplot(aes(x = home_win_odds, y = wins/games, y)) + 
+# Wins
+summary_wins %>%
+  filter(games>50) %>%
+  ggplot(aes(x = home_win_odds, y = wins/games)) + 
   geom_point() + 
   geom_abline(slope=1) + 
   xlab(label = "Pre-game implied home-team win probability") + 
@@ -44,12 +46,22 @@ summary %>%
   scale_x_continuous(labels = scales::percent) +
   scale_y_continuous(labels = scales::percent)
 
-summary %>%
-  filter(games>100) %>%
-  ggplot() + 
-  geom_point(aes(x = home_win_odds, y = wins/games, y)) + 
+
+# Summary draws
+summary_draws <- matchData %>%
+  group_by(home_draw_odds) %>%
+  summarize(losses = sum(home_loss), 
+            draws = sum(home_draw), 
+            wins = sum(home_win), 
+            games = sum(index))
+
+# Draws
+summary_draws %>%
+  filter(games>25) %>%
+  ggplot(aes(x = home_draw_odds, y = draws/games)) + 
+  geom_point() + 
   geom_abline(slope=1) + 
-  xlab(label = "Pre-game implied home-team win probability") + 
-  ylab(label = "Actual Home-team Win %") +
+  xlab(label = "Pre-game implied home-team draw probability") + 
+  ylab(label = "Actual Home-team Draw %") +
   scale_x_continuous(labels = scales::percent) +
   scale_y_continuous(labels = scales::percent)
